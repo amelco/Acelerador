@@ -1,5 +1,4 @@
 ﻿using Acelerador.Applications.Interfaces;
-using Acelerador.DbContexts;
 using Acelerador.DbContexts.Interfaces;
 using Acelerador.Entities;
 using Acelerador.Models;
@@ -33,7 +32,7 @@ namespace Acelerador.Applications
             //{
             //    throw new BadHttpRequestException("Cliente não pode ser atualizado. Erros são: ");
             //}
-             await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             // TODO: utilizar automapper
             var model = new ClienteModel

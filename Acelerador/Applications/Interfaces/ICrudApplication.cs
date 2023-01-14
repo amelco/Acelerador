@@ -1,8 +1,6 @@
-﻿using Acelerador.Models;
-
-namespace Acelerador.Applications.Interfaces
+﻿namespace Acelerador.Applications.Interfaces
 {
-    public interface ICrudApplication<TModel, TPatchModel> 
+    public interface ICrudApplication<TModel, TPatchModel>
         where TModel : class
         where TPatchModel : class
     {

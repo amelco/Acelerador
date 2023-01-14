@@ -16,7 +16,7 @@ namespace Acelerador.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Listar(CancellationToken cancellationToken) 
+        public async Task<IActionResult> Listar(CancellationToken cancellationToken)
         {
             var resultado = await _application.Listar(cancellationToken);
             if (resultado is null)

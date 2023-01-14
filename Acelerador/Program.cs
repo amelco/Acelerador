@@ -1,5 +1,3 @@
-using Acelerador.DbContexts;
-using Acelerador.DbContexts.Interfaces;
 using Acelerador.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
