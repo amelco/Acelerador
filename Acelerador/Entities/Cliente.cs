@@ -14,11 +14,7 @@ namespace Acelerador.Entities
             Nome = nome;
             Email = email;
 
-            var validador = new Validador<Cliente>(this);
-            validador.ValidaEmail(this.Email);
-
-            //if (!Auxiliadores.EmailValido(email))
-            //    Erros.Add("Email inválido");
+            Validador.ValidaEmail(this, email);
         }
 
         public void Atualizar(string? nome, string? email)
@@ -29,10 +25,7 @@ namespace Acelerador.Entities
                 Nome = nome;
             if (email is not null)
             {
-                //if (!Auxiliadores.EmailValido(email))
-                //    Erros.Add("Email inválido");
-                var validador = new Validador<Cliente>(this);
-                validador.ValidaEmail(email);
+                Validador.ValidaEmail(this, email);
                 Email = email;
             }
         }

@@ -2,19 +2,14 @@
 
 namespace Acelerador.Helpers
 {
-    public class Validador<T> where T : EntidadeBase
+    public static class Validador
     {
-        private T _entidade;
-        public Validador(T entidade)
-        {
-            _entidade = entidade;
-        }
-
-        public void ValidaEmail(string email, string mensagemErro = "Email inválido.")
+        public static void ValidaEmail<T>(T entidade, string email, string mensagemErro = "Email inválido.")
+            where T : EntidadeBase
         {
             if (!Auxiliadores.EmailValido(email))
             {
-                _entidade.Erros.Add(mensagemErro);
+                entidade.Erros.Add(mensagemErro);
             }
         }
     }
