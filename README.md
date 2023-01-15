@@ -1,10 +1,10 @@
 # Acelerador
 
-CÛdigo para facilitar (acelerar) a criaÁ„o de API's REST utilizando dotnet core 6. 
+C√≥digo para facilitar (acelerar) a cria√ß√£o de API's REST utilizando dotnet core 6. 
 
-Possui apenas um projeto contendo todas as camadas (AplicaÁ„o/Infraestrutura/DomÌnio).
+Possui apenas um projeto contendo todas as camadas (Aplica√ß√£o/Infraestrutura/Dom√≠nio).
 O motivo pra essa escolha foi a simplicidade.
-Entretanto, caso se queria criar projetos separados, a modificaÁ„o È simples pois tudo est· modularizado.
+Entretanto, caso se queria criar projetos separados, a modifica√ß√£o √© simples pois tudo est√° modularizado.
 
 ---
 
@@ -12,21 +12,19 @@ Entretanto, caso se queria criar projetos separados, a modificaÁ„o È simples poi
 
 ### Banco SQL
 
-O acelerador est· preparado para bancos de dados SQL. Basta criar um novo DbContext implementnado o SqlDbContext.
+O acelerador est√° preparado para bancos de dados SQL. Basta criar um novo DbContext implementnado o SqlDbContext.
 Nesse exemplo, o DbContext utiliza o SQLite.
 
-**OBSERVA«√O**  
-N„o utilize o SQLite em produÁ„o. Ele aqui est· somente como em exemplo para se criar o seu prÛprio context
+**OBSERVA√á√ÉO**  
+N√£o utilize o SQLite em produ√ß√£o. Ele aqui est√° somente como em exemplo para se criar o seu pr√≥prio context
 utilizando SQL Server, Postgres ou MySQL.
 
-### CRUD genÈrico
+### CRUD gen√©rico
 
-Para agilizar a criaÁ„o de CRUDS, uma Application genÈrica foi criada com os principais mÈtodos.
+Para agilizar a cria√ß√£o de CRUDS, uma Application gen√©rica foi criada com os principais m√©todos.
 
 ## TODO
 
 - Testes
-- Logging
 - Automapper
-- Tratanento de erros / mensagens de erros
-- AutenticaÁ„o / AutorizaÁ„o
+- Autentica√ß√£o / Autoriza√ß√£o
