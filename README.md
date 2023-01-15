@@ -1,10 +1,15 @@
 # Acelerador
 
 Código para facilitar (acelerar) a criação de API's REST utilizando dotnet core 6. 
-
 Possui apenas um projeto contendo todas as camadas (Aplicação/Infraestrutura/Domínio).
-O motivo pra essa escolha foi a simplicidade.
-Entretanto, caso se queria criar projetos separados, a modificação é simples pois tudo está modularizado.
+
+---
+
+## Importante
+
+A maior motivação de se criar esse repositório foi pra estudar e aplicar meus conhecimentos em dotnet.
+Estou tentando fazer tudo com implementações próprias com a única finalidade de aprender e me divertir enquanto isso.
+Nada aqui é pensado, em primeiro lugar, na eficiência ou numa "boa arquitetura", seja lá o que isso seja.
 
 ---
 
@@ -22,6 +27,10 @@ utilizando SQL Server, Postgres ou MySQL.
 ### CRUD genérico
 
 Para agilizar a criação de CRUDS, uma Application genérica foi criada com os principais métodos.
+
+### Validação de entidades
+
+Implementação própria.
 
 ## TODO
 
