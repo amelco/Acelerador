@@ -3,35 +3,37 @@ using Acelerador.DbContexts.Interfaces;
 using Acelerador.Entities;
 using Acelerador.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Acelerador.Applications
 {
     public class ClienteApplication : IClienteApplication
     {
         private readonly IDbContext _context;
+        private readonly ILogger<ClienteApplication> _logger;
 
-        public ClienteApplication(IDbContext context)
+        public ClienteApplication(IDbContext context, ILogger<ClienteApplication> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
-        public async Task<ClienteModel?> Atualizar(Guid id, ClientePatchModel patchModel, CancellationToken cancellationToken)
+        public async Task<Resultado<ClienteModel>?> Atualizar(Guid id, ClientePatchModel patchModel, CancellationToken cancellationToken)
         {
-            Console.WriteLine("Atualiza cliente.");
             var clienteASerAtualizado = await _context.Set<Cliente>().Where(c => c.Id == id).FirstOrDefaultAsync();
             if (clienteASerAtualizado is null)
             {
-                // TODO: fazer exceção customizada
-                throw new HttpRequestException("Cliente não encontrado");
+                _logger.LogInformation($"Cliente de Id {id} não encontrado");
+                return new Resultado<ClienteModel>("Cliente não encontrado", HttpStatusCode.NotFound);
             }
 
             clienteASerAtualizado.Atualizar(patchModel.Nome, patchModel.Email);
 
-            // TODO: utilizar flunt notifications para verificar campos
-            //if (!clienteASerAtualizado.IsValid)
-            //{
-            //    throw new BadHttpRequestException("Cliente não pode ser atualizado. Erros são: ");
-            //}
+            if (!clienteASerAtualizado.EstaValido)
+            {
+                return new Resultado<ClienteModel>(clienteASerAtualizado.Erros, HttpStatusCode.NotFound);
+            }
+
             await _context.SaveChangesAsync();
 
             // TODO: utilizar automapper
@@ -42,53 +44,73 @@ namespace Acelerador.Applications
                 Email = clienteASerAtualizado.Email
             };
 
-            return model;
+            return new Resultado<ClienteModel>(model);
         }
 
-        public async Task<IEnumerable<ClienteModel>?> Listar(CancellationToken cancellationToken)
+        public async Task<Resultado<IEnumerable<ClienteModel>>?> Listar(CancellationToken cancellationToken)
         {
-            Console.WriteLine("Lista cliente.");
             var clientes = await _context.Set<Cliente>().ToListAsync();
-
-            // TODO: validar os campos (utilizar automapper e flunt notifications)
             var clientesModel = new List<ClienteModel>();
-            if (clientes is not null)
+            if (clientes is null)
             {
-                // TODO: automapper para Converter List<Cliente> para List<ClienteModel>
-                foreach (var cliente in clientes)
-                {
-                    clientesModel.Add(new ClienteModel
-                    {
-                        Id = cliente.Id,
-                        Nome = cliente.Nome,
-                        Email = cliente.Email
-                    });
-                }
+                _logger.LogInformation("Sem usuários cadastrados");
+                return new Resultado<IEnumerable<ClienteModel>>("Sem usuários cadastrados", HttpStatusCode.NotFound);
             }
 
-            return clientesModel;
-        }
-
-        public Task<ClienteModel?> ObterPorId(Guid Id, CancellationToken cancellationToken)
-        {
-            Console.WriteLine("Obtém cliente por id.");
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> Remover(Guid id, CancellationToken cancellationToken)
-        {
-            Console.WriteLine("Remove cliente.");
-            throw new NotImplementedException();
-        }
-
-        public async Task<ClienteModel?> Salvar(ClienteModel clienteModel, CancellationToken cancellationToken)
-        {
-            // TODO: validar os campos (utilizar automapper e flunt notifications)
-            var cliente = new Cliente
+            // TODO: automapper para Converter List<Cliente> para List<ClienteModel>
+            foreach (var cliente in clientes)
             {
-                Nome = clienteModel.Nome,
-                Email = clienteModel.Email
+                clientesModel.Add(new ClienteModel
+                {
+                    Id = cliente.Id,
+                    Nome = cliente.Nome,
+                    Email = cliente.Email
+                });
+            }
+
+            return new Resultado<IEnumerable<ClienteModel>>(clientesModel);
+        }
+
+        public async Task<Resultado<ClienteModel>?> ObterPorId(Guid id, CancellationToken cancellationToken)
+        {
+            var cliente = await _context.Set<Cliente>().Where(c => c.Id == id).FirstOrDefaultAsync();
+            if (cliente is null)
+            {
+                _logger.LogInformation($"Cliente de Id {id} não encontrado");
+                return new Resultado<ClienteModel>("Cliente não encontrado", HttpStatusCode.NotFound);
+            }
+            var clienteModel = new ClienteModel
+            {
+                Id = cliente.Id,
+                Nome = cliente.Nome,
+                Email = cliente.Email
             };
+            return new Resultado<ClienteModel>(clienteModel);
+        }
+
+        public async Task<bool> Remover(Guid id, CancellationToken cancellationToken)
+        {
+            var cliente = await _context.Set<Cliente>().Where(c => c.Id == id).FirstOrDefaultAsync();
+            if (cliente is null)
+            {
+                _logger.LogInformation($"Cliente de Id {id} não encontrado. Cliente não removido.");
+                return false;
+            }
+
+            _context.Set<Cliente>().Remove(cliente);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<Resultado<ClienteModel>?> Salvar(ClienteModel clienteModel, CancellationToken cancellationToken)
+        {
+            var cliente = new Cliente(clienteModel.Nome, clienteModel.Email);
+
+            if (!cliente.EstaValido)
+            {
+                return new Resultado<ClienteModel>(cliente.Erros, HttpStatusCode.BadRequest);
+            }
 
             var result = await _context.Set<Cliente>().AddAsync(cliente, cancellationToken);
 
@@ -96,7 +118,7 @@ namespace Acelerador.Applications
             {
                 await _context.SaveChangesAsync();
                 clienteModel.Id = result.Entity.Id;
-                return clienteModel;
+                return new Resultado<ClienteModel>(clienteModel);
             }
 
             return null;

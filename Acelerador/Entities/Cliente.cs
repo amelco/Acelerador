@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Acelerador.Helpers;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Acelerador.Entities
 {
@@ -8,13 +9,32 @@ namespace Acelerador.Entities
         public string Nome { get; set; } = null!;
         public string Email { get; set; } = null!;
 
+        public Cliente(string nome, string email)
+        {
+            Nome = nome;
+            Email = email;
+
+            if (!Auxiliadores.EmailValido(email))
+                Erros.Add("Email inválido");
+        }
 
         public void Atualizar(string? nome, string? email)
         {
+            LimpaErros();
+
             if (nome is not null)
                 Nome = nome;
             if (email is not null)
+            {
+                if (!Auxiliadores.EmailValido(email))
+                    Erros.Add("Email inválido");
                 Email = email;
+            }
+        }
+
+        private void LimpaErros()
+        {
+            Erros.Clear();
         }
     }
 }
