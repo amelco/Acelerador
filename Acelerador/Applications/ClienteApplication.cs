@@ -27,7 +27,7 @@ namespace Acelerador.Applications
                 return new Resultado<ClienteModel>("Cliente não encontrado", HttpStatusCode.NotFound);
             }
 
-            clienteASerAtualizado.Atualizar(patchModel.Nome, patchModel.Email);
+            clienteASerAtualizado.Atualizar(patchModel.Nome, patchModel.Email, patchModel.Cpf);
 
             if (!clienteASerAtualizado.EstaValido)
             {
@@ -105,7 +105,7 @@ namespace Acelerador.Applications
 
         public async Task<Resultado<ClienteModel>?> Salvar(ClienteModel clienteModel, CancellationToken cancellationToken)
         {
-            var cliente = new Cliente(clienteModel.Nome, clienteModel.Email);
+            var cliente = new Cliente(clienteModel.Nome, clienteModel.Email, clienteModel.Cpf, clienteModel.Cnpj);
 
             if (!cliente.EstaValido)
             {
